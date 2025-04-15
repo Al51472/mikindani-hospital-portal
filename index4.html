@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mikindani Hospital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f8fb; color: #333; }
+    header { background-color: #0a4275; color: white; padding: 20px 0; text-align: center; }
+    nav { background-color: #064773; display: flex; justify-content: center; padding: 10px 0; }
+    nav a { color: white; padding: 14px 20px; text-decoration: none; font-weight: bold; }
+    nav a:hover { background-color: #0c5ca5; border-radius: 4px; }
+
+    .hero {
+      background: url('https://images.unsplash.com/photo-1588776814546-ec7e6b3c9a98') center/cover no-repeat;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 1px 1px 5px black;
+      font-size: 2rem;
+    }
+
+    .section { padding: 40px 20px; max-width: 1000px; margin: auto; }
+    .section h2 { color: #0a4275; }
+    .footer { background: #eee; text-align: center; padding: 20px; margin-top: 40px; }
+    
+    .login-section input {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+
+    button {
+      background: #0a4275; color: white; padding: 10px 20px;
+      border: none; cursor: pointer; border-radius: 4px;
+    }
+
+    button:hover {
+      background: #083965;
+    }
+
+    .form-box {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Welcome to Mikindani Hospital</h1>
+  <p>Quality Healthcare, Always</p>
+</header>
+
+<nav>
+  <a href="#about">About</a>
+  <a href="#services">Services</a>
+  <a href="#login">Patient Login</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<div class="hero">
+  Compassionate Care for Everyone
+</div>
+
+<section id="about" class="section">
+  <h2>About Us</h2>
+  <p>Mikindani Hospital is committed to providing quality and affordable healthcare to the community. Our services span from general outpatient to specialized consultations, diagnostics, and pharmacy support.</p>
+</section>
+
+<section id="services" class="section">
+  <h2>Our Services</h2>
+  <ul>
+    <li>Outpatient Services</li>
+    <li>Laboratory Tests</li>
+    <li>Consultant Specialists</li>
+    <li>Pharmacy</li>
+    <li>Maternity and Pediatrics</li>
+    <li>Emergency Services</li>
+  </ul>
+</section>
+
+<section id="login" class="section login-section">
+  <h2>Patient Login</h2>
+  <div class="form-box">
+    <input type="text" placeholder="Email or Patient ID">
+    <input type="password" placeholder="Password">
+    <button>Login</button>
+    <p style="text-align: right; font-size: 0.9em;"><a href="#">Forgot Password?</a></p>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <h2>Contact Us</h2>
+  <p>Email: info@mikindanihospital.org</p>
+  <p>Phone: +254 712 345678</p>
+  <p>Address: Mikindani Road, Mombasa, Kenya</p>
+</section>
+
+<div class="footer">
+  &copy; 2025 Mikindani Hospital. All Rights Reserved.
+</div>
+
+</body>
+</html>
