@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mikindani Hospital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; color: #333; }
+    header { background: #006699; color: white; padding: 20px; text-align: center; }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; background: #004d66; }
+    nav a { color: white; padding: 15px 20px; text-decoration: none; }
+    nav a:hover { background: #006080; }
+    .hero {
+      background: url('https://source.unsplash.com/1600x500/?hospital') no-repeat center/cover;
+      height: 300px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 2em; text-shadow: 2px 2px 4px #000;
+    }
+    .container { max-width: 1000px; margin: auto; padding: 30px; }
+    .section { margin: 40px 0; }
+    .services { display: flex; flex-wrap: wrap; gap: 20px; }
+    .service {
+      background: white; padding: 20px; flex: 1 1 45%;
+      border: 1px solid #ddd; border-radius: 5px;
+    }
+    input, textarea, select, button {
+      width: 100%; padding: 10px; margin-top: 10px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button { background: #006699; color: white; cursor: pointer; }
+    button:hover { background: #004d66; }
+    footer { background: #eee; text-align: center; padding: 20px; margin-top: 40px; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Mikindani Hospital</h1>
+  <p>Compassionate Care for a Healthier You</p>
+</header>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#about">About Us</a>
+  <a href="#departments">Departments</a>
+  <a href="#status">Check Status</a>
+  <a href="#admin">Admin</a>
+</nav>
+
+<div class="hero" id="home">
+  Your Health, Our Priority
+</div>
+
+<div class="container">
+  <div id="about" class="section">
+    <h2>About Mikindani Hospital</h2>
+    <p>We provide world-class medical care with experienced consultants and modern diagnostic facilities.</p>
+  </div>
+
+  <div id="departments" class="section">
+    <h2>Departments</h2>
+    <div class="services">
+      <div class="service"><h3>Outpatient</h3><p>Walk-in consultations and clinics.</p></div>
+      <div class="service"><h3>Laboratory</h3><p>Advanced diagnostics and testing.</p></div>
+      <div class="service"><h3>Pharmacy</h3><p>24/7 medicine dispensing.</p></div>
+      <div class="service"><h3>Consultants</h3><p>Specialized care and appointments.</p></div>
+    </div>
+  </div>
+
+  <div id="status" class="section">
+    <h2>Check Patient Status</h2>
+    <input type="text" id="searchName" placeholder="Enter patient name...">
+    <button onclick="searchPatient()">Search</button>
+    <div id="result" class="card hidden"></div>
+  </div>
+
+  <div id="admin" class="section">
+    <h2>Admin Login</h2>
+    <div id="adminLogin" class="card">
+      <input type="text" id="adminUser" placeholder="Username">
+      <input type="password" id="adminPass" placeholder="Password">
+      <button onclick="adminLogin()">Login</button>
+    </div>
+
+    <div id="adminPanel" class="card hidden">
+      <h3>Add/Update Patient Record</h3>
+      <input type="text" id="pname" placeholder="Patient Name">
+      <textarea id="problem" placeholder="Medical Problem"></textarea>
+      <textarea id="lab" placeholder="Lab Test Info"></textarea>
+      <textarea id="consult" placeholder="Consultant Note"></textarea>
+      <select id="statusSel">
+        <option value="">Select Status</option>
+        <option>With Doctor</option>
+        <option>In Lab</option>
+        <option>In Pharmacy</option>
+        <option>Discharged</option>
+      </select>
+      <button onclick="saveRecord()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Mikindani Hospital. All rights reserved.
+</footer>
+
+<script>
+  const adminUsername = "admin";
+  const adminPassword = "pass123";
+
+  function adminLogin() {
+    const u = document.getElementById('adminUser').value;
+    const p = document.getElementById('adminPass').value;
+    if (u === adminUsername && p === adminPassword) {
+      document.getElementById('adminLogin').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+    } else {
+      alert("Invalid login.");
+    }
+  }
+
+  function saveRecord() {
+    const name = document.getElementById('pname').value.trim();
+    const record = {
+      name,
+      problem: document.getElementById('problem').value,
+      lab: document.getElementById('lab').value,
+      consult: document.getElementById('consult').value,
+      status: document.getElementById('statusSel').value,
+      time: new Date().toLocaleString()
+    };
+    if (!name) return alert("Enter patient name.");
+    let patients = JSON.parse(localStorage.getItem('patients') || "[]");
+    const index = patients.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+    if (index >= 0) patients[index] = record;
+    else patients.push(record);
+    localStorage.setItem('patients', JSON.stringify(patients));
+    alert("Patient record saved.");
+  }
+
+  function searchPatient() {
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const patients = JSON.parse(localStorage.getItem('patients') || "[]");
+    const found = patients.find(p => p.name.toLowerCase() === name);
+    const result = document.getElementById('result');
+    if (found) {
+      result.innerHTML = `
+        <h3>Status for ${found.name}</h3>
+        <p><strong>Problem:</strong> ${found.problem}</p>
+        <p><strong>Lab:</strong> ${found.lab}</p>
+        <p><strong>Consult:</strong> ${found.consult}</p>
+        <p><strong>Status:</strong> ${found.status}</p>
+        <p><em>Last Updated:</em> ${found.time}</p>
+      `;
+    } else {
+      result.innerHTML = <p>No record found for that name.</p>;
+    }
+    result.classList.remove('hidden');
+  }
+</script>
+
+</body>
+</html>
