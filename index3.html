@@ -1,0 +1,178 @@
+# Creating a zip file for the fully functional hospital website so the user can download and run it locally or deploy online.
+
+import zipfile
+import os
+
+# Create a directory structure
+base_dir = "/mnt/data/mikindani_hospital"
+os.makedirs(base_dir, exist_ok=True)
+
+index_html = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mikindani Hospital Staff Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f0f8ff; }
+    header { background: #0077b6; color: white; padding: 20px; text-align: center; }
+    nav { background: #023e8a; display: flex; justify-content: space-around; padding: 10px 0; }
+    nav a { color: white; text-decoration: none; font-weight: bold; }
+    .container { max-width: 1000px; margin: auto; padding: 30px; }
+    .section { margin-bottom: 40px; }
+    .hidden { display: none; }
+    input, textarea, select, button {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+    button { background: #0077b6; color: white; border: none; cursor: pointer; }
+    button:hover { background: #005f8c; }
+    footer { background: #eee; text-align: center; padding: 20px; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    .login-box { max-width: 400px; margin: 100px auto; }
+  </style>
+</head>
+<body>
+
+<div id="loginPage" class="login-box card">
+  <h2>Staff Login - Mikindani Hospital</h2>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="dashboard" class="hidden">
+  <header>
+    <h1>Mikindani Hospital Staff Dashboard</h1>
+    <p>Welcome, staff! Manage patient records and hospital services.</p>
+  </header>
+
+  <nav>
+    <a href="#patients">Patients</a>
+    <a href="#lab">Lab Tests</a>
+    <a href="#consult">Consultations</a>
+    <a href="#pharmacy">Pharmacy</a>
+    <a href="#status">Check Status</a>
+  </nav>
+
+  <div class="container">
+
+    <div id="patients" class="section card">
+      <h2>Register / Update Patient</h2>
+      <input type="text" id="pname" placeholder="Patient Name">
+      <textarea id="problem" placeholder="Medical Problem"></textarea>
+    </div>
+
+    <div id="lab" class="section card">
+      <h2>Lab Tests</h2>
+      <textarea id="labtest" placeholder="Lab Test Details"></textarea>
+    </div>
+
+    <div id="consult" class="section card">
+      <h2>Consultation Notes</h2>
+      <textarea id="consultnotes" placeholder="Doctor's Notes"></textarea>
+    </div>
+
+    <div id="pharmacy" class="section card">
+      <h2>Pharmacy Record</h2>
+      <textarea id="pharmacyInfo" placeholder="Medication or Pharmacy Info"></textarea>
+    </div>
+
+    <div id="status" class="section card">
+      <h2>Treatment Status</h2>
+      <select id="treatStatus">
+        <option value="">Select Status</option>
+        <option>In Lab</option>
+        <option>With Doctor</option>
+        <option>In Pharmacy</option>
+        <option>Discharged</option>
+      </select>
+      <button onclick="saveRecord()">Save Record</button>
+    </div>
+
+    <div class="section card">
+      <h2>Search Patient Status</h2>
+      <input type="text" id="searchName" placeholder="Enter Patient Name">
+      <button onclick="searchPatient()">Search</button>
+      <div id="result" style="margin-top: 15px;"></div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Mikindani Hospital. Staff use only.
+  </footer>
+</div>
+
+<script>
+  const staffUsername = "staff";
+  const staffPassword = "mikindani123";
+
+  function login() {
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
+
+    if (u === staffUsername && p === staffPassword) {
+      document.getElementById('loginPage').style.display = "none";
+      document.getElementById('dashboard').classList.remove("hidden");
+    } else {
+      alert("Incorrect credentials. Please try again.");
+    }
+  }
+
+  function saveRecord() {
+    const name = document.getElementById('pname').value.trim();
+    const record = {
+      name,
+      problem: document.getElementById('problem').value,
+      lab: document.getElementById('labtest').value,
+      consult: document.getElementById('consultnotes').value,
+      pharmacy: document.getElementById('pharmacyInfo').value,
+      status: document.getElementById('treatStatus').value,
+      updated: new Date().toLocaleString()
+    };
+    if (!name) return alert("Enter patient name.");
+    let patients = JSON.parse(localStorage.getItem('patients') || "[]");
+    const index = patients.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+    if (index >= 0) patients[index] = record;
+    else patients.push(record);
+    localStorage.setItem('patients', JSON.stringify(patients));
+    alert("Patient record saved.");
+  }
+
+  function searchPatient() {
+    const name = document.getElementById('searchName').value.trim().toLowerCase();
+    const patients = JSON.parse(localStorage.getItem('patients') || "[]");
+    const found = patients.find(p => p.name.toLowerCase() === name);
+    const result = document.getElementById('result');
+    if (found) {
+      result.innerHTML = `
+        <strong>Name:</strong> ${found.name}<br>
+        <strong>Problem:</strong> ${found.problem}<br>
+        <strong>Lab:</strong> ${found.lab}<br>
+        <strong>Consultation:</strong> ${found.consult}<br>
+        <strong>Pharmacy:</strong> ${found.pharmacy}<br>
+        <strong>Status:</strong> ${found.status}<br>
+        <em>Last Updated:</em> ${found.updated}
+      `;
+    } else {
+      result.innerHTML = <p>No record found.</p>;
+    }
+  }
+</script>
+
+</body>
+</html>
+"""
+
+# Write the index.html file
+index_path = os.path.join(base_dir, "index.html")
+with open(index_path, "w") as f:
+    f.write(index_html)
+
+# Create a zip file
+zip_path = "/mnt/data/mikindani_hospital.zip"
+with zipfile.ZipFile(zip_path, 'w') as zipf:
+    zipf.write(index_path, arcname="index.html")
+
+zip_path
