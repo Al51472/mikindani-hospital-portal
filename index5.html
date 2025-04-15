@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- [Previous head content remains the same] -->
+    <style>
+        /* [Previous CSS remains the same] */
+        
+        /* New Lab Tests Section */
+        .lab-tests {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+        }
+        
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .test-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .test-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background-color: #dbeafe;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .test-status {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-ordered {
+            background-color: #fef9c3;
+            color: #b45309;
+        }
+        
+        .status-completed {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+        
+        /* Appointment Calendar */
+        .calendar {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-light);
+            padding: 5px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            padding: 4px;
+            cursor: pointer;
+        }
+        
+        .calendar-day.empty {
+            background: transparent;
+        }
+        
+        .calendar-day.current {
+            background-color: #eff6ff;
+        }
+        
+        .calendar-day-number {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .calendar-appointment {
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: 4px;
+            font-size: 10px;
+            padding: 2px 4px;
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Emergency Alert */
+        .emergency-alert {
+            background-color: #fee2e2;
+            color: var(--danger);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        /* Patient Detail Modal */
+        .patient-detail-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .patient-detail-label {
+            width: 120px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        
+        .patient-detail-value {
+            flex: 1;
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .prescription-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .vital-signs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .vital-sign-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .vital-sign-title {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .vital-sign-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- [Previous header and sidebar content remains the same] -->
+    
+    <main class="main-content">
+        <!-- Emergency Alert -->
+        <div class="emergency-alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>Emergency Case:</strong> Patient ID MH-2024-008 (Grace Ansong) requires immediate attention - Severe allergic reaction
+            </div>
+        </div>
+        
+        <!-- [Previous search and stats content remains the same] -->
+        
+        <!-- Lab Tests Section -->
+        <div class="lab-tests">
+            <div class="table-header">
+                <h3 class="section-title">Pending Lab Tests</h3>
+                <div class="table-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        New Test
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-info">
+                    <div class="test-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div>
+                        <div>Malaria Parasite Test</div>
+                        <div class="patient-id">Patient: Kwame Osei (MH-2024-001)</div>
+                    </div>
+                </div>
+                <div>
+                    <span class="test-status status-ordered">Ordered</span>
+                </div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-info">
+                    <div class="test-icon">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <div>
+                        <div>Complete Blood Count</div>
+                        <div class="patient-id">Patient: Ama Mensah (MH-2024-002)</div>
+                    </div>
+                </div>
+                <div>
+                    <span class="test-status status-completed">Completed</span>
+                </div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-info">
+                    <div class="test-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <div>
+                        <div>Urinalysis</div>
+                        <div class="patient-id">Patient: Yaw Boateng (MH-2024-003)</div>
+                    </div>
+                </div>
+                <div>
+                    <span class="test-status status-ordered">Ordered</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appointment Calendar -->
+        <div class="calendar">
+            <div class="calendar-header">
+                <h3 class="section-title">Appointments</h3>
+                <div class="calendar-nav">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div style="font-weight: 500;">April 2024</div>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calendar-grid">
+                <div class="calendar-day-header">Sun</div>
+                <div class="calendar-day-header">Mon</div>
+                <div class="calendar-day-header">Tue</div>
+                <div class="calendar-day-header">Wed</div>
+                <div class="calendar-day-header">Thu</div>
+                <div class="calendar-day-header">Fri</div>
+                <div class="calendar-day-header">Sat</div>
+                
+                <!-- Calendar days would be generated by JavaScript -->
+                <div class="calendar-day empty"></div>
+                <div class="calendar-day empty"></div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">1</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">2</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">3</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">4</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">5</div>
+                </div>
+                
+                <!-- Week 2 -->
+                <div class="calendar-day">
+                    <div class="calendar-day-number">6</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">7</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">8</div>
+                    <div class="calendar-appointment" title="Dr. Mensah - 9:00 AM">9:00 AM</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">9</div>
+                    <div class="calendar-appointment" title="Dr. Owusu - 2:00 PM">2:00 PM</div>
+                </div>
+                <div class="calendar-day current">
+                    <div class="calendar-day-number">10</div>
+                    <div class="calendar-appointment" title="Dr. Akoto - 10:30 AM">10:30 AM</div>
+                    <div class="calendar-appointment" title="Dr. Mensah - 3:00 PM">3:00 PM</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">11</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">12</div>
+                </div>
+                
+                <!-- More days... -->
+            </div>
+        </div>
+        
+        <!-- [Patients table remains the same] -->
+    </main>
+    
+    <!-- [Sync notification remains the same] -->
+    
+    <!-- Patient Detail Modal -->
+    <div class="modal" id="patientDetailModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Patient Details</h3>
+                <button class="modal-close" id="closeDetailModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="patient-detail-row">
+                    <div class="patient-detail-label">Patient ID</div>
+                    <div class="patient-detail-value">MH-2024-001</div>
+                </div>
+                <div class="patient-detail-row">
+                    <div class="patient-detail-label">Full Name</div>
+                    <div class="patient-detail-value">Kwame Osei</div>
+                </div>
+                <div class="patient-detail-row">
+                    <div class="patient-detail-label">Date of Birth</div>
+                    <div class="patient-detail-value">15 June 1991 (32 years)</div>
+                </div>
+                <div class="patient-detail-row">
+                    <div class="patient-detail-label">Gender</div>
+                    <div class="patient-detail-value">Male</div>
+                </div>
+                <div class="patient-detail-row">
+                    <div class="patient-detail-label">Contact</div>
+                    <div class="patient-detail-value">+233 24 123 4567</div>
+                </div>
+                <div class="patient-detail-row">
+                    <div class="patient-detail-label">Address</div>
+                    <div class="patient-detail-value">123 Ashanti Street, Kumasi</div>
+                </div>
+                
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="medical">Medical History</div>
+                        <div class="tab" data-tab="prescriptions">Prescriptions</div>
+                        <div class="tab" data-tab="vitals">Vital Signs</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="medical-tab">
+                        <div class="patient-detail-row">
+                            <div class="patient-detail-label">Blood Type</div>
+                            <div class="patient-detail-value">O+</div>
+                        </div>
+                        <div class="patient-detail-row">
+                            <div class="patient-detail-label">Allergies</div>
+                            <div class="patient-detail-value">Penicillin</div>
+                        </div>
+                        <div class="patient-detail-row">
+                            <div class="patient-detail-label">Chronic Conditions</div>
+                            <div class="patient-detail-value">None</div>
+                        </div>
+                        <div class="patient-detail-row">
+                            <div class="patient-detail-label">Last Diagnosis</div>
+                            <div class="patient-detail-value">Malaria (15 April 2024)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="prescriptions-tab">
+                        <div class="prescription-item">
+                            <div>
+                                <strong>Artemether-Lumefantrine</strong>
+                                <div>20mg, Take twice daily for 3 days</div>
+                                <div class="patient-id">Prescribed: 15 April 2024 by Dr. Mensah</div>
+                            </div>
+                            <div>
+                                <span class="test-status status-completed">Active</span>
+                            </div>
+                        </div>
+                        <div class="prescription-item">
+                            <div>
+                                <strong>Paracetamol</strong>
+                                <div>500mg, As needed for fever</div>
+                                <div class="patient-id">Prescribed: 15 April 2024 by Dr. Mensah</div>
+                            </div>
+                            <div>
+                                <span class="test-status status-completed">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="vitals-tab">
+                        <div class="vital-signs-grid">
+                            <div class="vital-sign-card">
+                                <div class="vital-sign-title">Blood Pressure</div>
+                                <div class="vital-sign-value">120/80 mmHg</div>
+                            </div>
+                            <div class="vital-sign-card">
+                                <div class="vital-sign-title">Heart Rate</div>
+                                <div class="vital-sign-value">72 bpm</div>
+                            </div>
+                            <div class="vital-sign-card">
+                                <div class="vital-sign-title">Temperature</div>
+                                <div class="vital-sign-value">37.1°C</div>
+                            </div>
+                            <div class="vital-sign-card">
+                                <div class="vital-sign-title">Oxygen Saturation</div>
+                                <div class="vital-sign-value">98%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelDetailBtn">
+                    Close
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-print"></i>
+                    Print Record
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // [Previous JavaScript remains the same]
+        
+        // New functionality for tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(${tabId}-tab).classList.add('active');
+            });
+        });
+        
+        // Calendar navigation would be implemented here
+        // Patient detail modal controls
+        const patientDetailModal = document.getElementById('patientDetailModal');
+        const closeDetailModalBtn = document.getElementById('closeDetailModalBtn');
+        const cancelDetailBtn = document.getElementById('cancelDetailBtn');
+        
+        // Modify the viewPatient function to show the modal
+        function viewPatient(patientId) {
+            patientDetailModal.classList.add('show');
+        }
+        
+        closeDetailModalBtn.addEventListener('click', () => {
+            patientDetailModal.classList.remove('show');
+        });
+        
+        cancelDetailBtn.addEventListener('click', () => {
+            patientDetailModal.classList.remove('show');
+        });
+        
+        // Emergency alert click handler
+        document.querySelector('.emergency-alert').addEventListener('click', () => {
+            alert("Emergency protocol activated. Notifying on-call doctor and preparing treatment room.");
+        });
+    </script>
+</body>
+</html>v
+        function viewPatient(patientId) {
+            patientDetailModal.classList.add('show');
+        }
+        
+        closeDetailModalBtn.addEventListener('click', () => {
+            patientDetailModal.classList.remove('show');
+        });
+        
+        cancelDetailBtn.addEventListener('click', () => {
+            patientDetailModal.classList.remove('show');
+        });
+        
+        // Emergency alert click handler
+        document.querySelector('.emergency-alert').addEventListener('click', () => {
+            alert("Emergency protocol activated. Notifying on-call doctor and preparing treatment room.");
+        });
+    </script>
+</body>
+</html>
